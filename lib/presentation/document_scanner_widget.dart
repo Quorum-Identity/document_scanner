@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:document_scanner/data/datasources/gpt_source.dart';
 import 'package:flutter/material.dart';
-import '../../data/datasources/gpt_source.dart';
-import '../../data/repositories/document_scanner_repository_impl.dart';
-import '../../presentation/document_scanner_controller.dart';
+import '../data/repositories/document_scanner_repository_impl.dart';
+import '../presentation/document_scanner_controller.dart';
 import '../domain/entities/document_data.dart';
 import 'package:camera/camera.dart';
 
@@ -24,6 +24,11 @@ class _DocumentCameraViewState extends State<DocumentCameraView> {
   CameraController? _cameraController;
   bool _isInitialized = false;
   Timer? _scanTimer;
+
+  // Ajustar las constantes de tiempo
+  static const Duration _scanInterval = Duration(milliseconds: 500);
+  static const int _maxAttempts = 20; // 10 segundos en total
+  int _attempts = 0;
 
   @override
   void initState() {
@@ -53,14 +58,20 @@ class _DocumentCameraViewState extends State<DocumentCameraView> {
   }
 
   void _startScanning() {
-    _scanTimer = Timer.periodic(const Duration(seconds: 2), (timer) async {
-      if (_cameraController?.value.isInitialized ?? false) {
-        try {
-          final image = await _cameraController!.takePicture();
-          widget.onImageCaptured(image);
-        } catch (e) {
-          print('Error al capturar imagen: $e');
-        }
+    _scanTimer = Timer.periodic(_scanInterval, (timer) async {
+      if (!(_cameraController?.value.isInitialized ?? false)) return;
+      
+      _attempts++;
+      if (_attempts >= _maxAttempts) {
+        _scanTimer?.cancel();
+        return;
+      }
+
+      try {
+        final image = await _cameraController!.takePicture();
+        widget.onImageCaptured(image);
+      } catch (e) {
+        print('Error al capturar imagen: $e');
       }
     });
   }
@@ -165,7 +176,7 @@ class _DocumentScannerState extends State<DocumentScanner> {
   void initState() {
     super.initState();
     final repository = DocumentScannerRepositoryImpl(
-      gptSource: GPTSource(apiKey: widget.apiKey),
+      gptSource: GPTSource(),
     );
     _controller = DocumentScannerController(repository);
     _controller.startScanning();

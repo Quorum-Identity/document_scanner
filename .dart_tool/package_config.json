@@ -116,6 +116,18 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "google_mlkit_commons",
+      "rootUri": "file:///C:/Users/barto/AppData/Local/Pub/Cache/hosted/pub.dev/google_mlkit_commons-0.6.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
+      "name": "google_mlkit_text_recognition",
+      "rootUri": "file:///C:/Users/barto/AppData/Local/Pub/Cache/hosted/pub.dev/google_mlkit_text_recognition-0.11.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
       "name": "http_parser",
       "rootUri": "file:///C:/Users/barto/AppData/Local/Pub/Cache/hosted/pub.dev/http_parser-4.0.2",
       "packageUri": "lib/",
@@ -254,7 +266,7 @@
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2024-11-24T16:26:15.791896Z",
+  "generated": "2024-11-24T16:35:16.659575Z",
   "generator": "pub",
   "generatorVersion": "3.5.4",
   "flutterRoot": "file:///C:/Users/barto/Desktop/flutter",

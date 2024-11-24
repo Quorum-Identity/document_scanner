@@ -1,72 +1,60 @@
 import '../../domain/entities/document_data.dart';
-import 'dart:convert';
-import 'package:dio/dio.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 
 class GPTSource {
-  final String apiKey;
-  final Dio _dio;
-  
-  GPTSource({required this.apiKey}) : _dio = Dio();
+  GPTSource();
 
-  Future<DocumentData?> processDocument(String image) async {
+  Future<DocumentData?> processDocument(String imagePath) async {
     try {
-      final response = await _dio.post(
-        'https://api.openai.com/v1/chat/completions',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $apiKey',
-            'Content-Type': 'application/json',
-          },
-        ),
-        data: {
-          'model': 'gpt-4-vision-preview',
-          'messages': [
-            {
-              'role': 'user',
-              'content': [
-                {
-                  'type': 'text',
-                  'text': '''Analiza esta imagen y extrae:
-                    - Tipo de documento
-                    - Nombre completo
-                    - Número de documento
-                    - Fecha de nacimiento
-                    - Fecha de vencimiento
-                    Responde en JSON.'''
-                },
-                {
-                  'type': 'image_url',
-                  'image_url': {'url': image}
-                }
-              ]
-            }
-          ]
-        },
-      );
-
-      final data = jsonDecode(response.data);
-      return _parseGPTResponse(data);
+      final textRecognizer = TextRecognizer();
+      final inputImage = InputImage.fromFilePath(imagePath);
+      final recognizedText = await textRecognizer.processImage(inputImage);
+      
+      await textRecognizer.close();
+      
+      return _parseRecognizedText(recognizedText.text);
     } catch (e) {
-      print('Error en GPT: $e');
+      print('Error en OCR: $e');
       return null;
     }
   }
 
-  DocumentData? _parseGPTResponse(Map<String, dynamic> response) {
+  DocumentData? _parseRecognizedText(String text) {
     try {
-      final content = response['choices'][0]['message']['content'];
-      final data = jsonDecode(content);
-      
       return DocumentData(
-        documentType: data['documentType'],
-        fullName: data['fullName'],
-        documentNumber: data['documentNumber'],
-        birthDate: DateTime.tryParse(data['birthDate'] ?? ''),
-        expiryDate: DateTime.tryParse(data['expiryDate'] ?? ''),
+        documentType: _extractDocumentType(text),
+        fullName: _extractFullName(text),
+        documentNumber: _extractDocumentNumber(text),
+        birthDate: _extractDate(text, isDateOfBirth: true),
+        expiryDate: _extractDate(text, isDateOfBirth: false),
       );
     } catch (e) {
-      print('Error parseando respuesta: $e');
+      print('Error parseando texto: $e');
       return null;
     }
+  }
+
+  String _extractDocumentType(String text) {
+    // Implementa la lógica para extraer el tipo de documento del texto
+    // Este es un ejemplo básico
+    return '';
+  }
+
+  String _extractFullName(String text) {
+    // Implementa la lógica para extraer el nombre completo del texto
+    // Este es un ejemplo básico
+    return '';
+  }
+
+  String _extractDocumentNumber(String text) {
+    // Implementa la lógica para extraer el número de documento del texto
+    // Este es un ejemplo básico
+    return '';
+  }
+
+  DateTime? _extractDate(String text, {bool isDateOfBirth = false}) {
+    // Implementa la lógica para extraer la fecha del texto
+    // Este es un ejemplo básico
+    return null;
   }
 } 
