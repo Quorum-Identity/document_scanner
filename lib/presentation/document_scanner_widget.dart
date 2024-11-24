@@ -1,10 +1,9 @@
 import 'dart:io';
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import '../data/datasources/gpt_source.dart';
-import '../data/repositories/document_scanner_repository_impl.dart';
-import '../presentation/document_scanner_controller.dart';
+import '../../data/datasources/gpt_source.dart';
+import '../../data/repositories/document_scanner_repository_impl.dart';
+import '../../presentation/document_scanner_controller.dart';
 import '../domain/entities/document_data.dart';
 import 'package:camera/camera.dart';
 

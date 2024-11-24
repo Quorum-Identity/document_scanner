@@ -1,7 +1,7 @@
 name: document_scanner
 description: Un escáner de documentos que utiliza GPT para extraer información
 version: 0.0.1
-homepage: https://github.com/tu-usuario/document_scanner
+homepage: https://github.com/Quorum-Identity/document_scanner
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   camera: ^0.10.0
+  dio: ^5.4.0
   # Agrega aquí otras dependencias necesarias
 
 dev_dependencies:

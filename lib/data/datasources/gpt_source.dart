@@ -1,21 +1,24 @@
 import '../../domain/entities/document_data.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 class GPTSource {
   final String apiKey;
+  final Dio _dio;
   
-  GPTSource({required this.apiKey});
+  GPTSource({required this.apiKey}) : _dio = Dio();
 
   Future<DocumentData?> processDocument(String image) async {
     try {
-      final response = await http.post(
-        Uri.parse('https://api.openai.com/v1/chat/completions'),
-        headers: {
-          'Authorization': 'Bearer $apiKey',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
+      final response = await _dio.post(
+        'https://api.openai.com/v1/chat/completions',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $apiKey',
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: {
           'model': 'gpt-4-vision-preview',
           'messages': [
             {
@@ -38,10 +41,10 @@ class GPTSource {
               ]
             }
           ]
-        }),
+        },
       );
 
-      final data = jsonDecode(response.body);
+      final data = jsonDecode(response.data);
       return _parseGPTResponse(data);
     } catch (e) {
       print('Error en GPT: $e');
